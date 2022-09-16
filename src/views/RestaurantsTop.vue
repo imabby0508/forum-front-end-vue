@@ -13,7 +13,7 @@
       <div class="row no-gutters">
         <div class="col-md-4">
           <a href="#">
-            <img class="card-img" :src="restaurant.image" />
+            <img class="card-img" :src="restaurant.image | emptyImage" />
           </a>
         </div>
         <div class="col-md-8">
@@ -25,7 +25,11 @@
             <p class="card-text">
               {{ restaurant.description }}
             </p>
-            <router-link :to="{name: 'restaurant', params: {id: restaurant.id}}" class="btn btn-primary mr-2">Show</router-link>
+            <router-link
+              :to="{ name: 'restaurant', params: { id: restaurant.id } }"
+              class="btn btn-primary mr-2"
+              >Show</router-link
+            >
 
             <button
               v-if="restaurant.isFavorited"
@@ -52,6 +56,7 @@
 
 <script>
 import NavTabs from "./../components/NavTabs";
+import { emptyImageFilter } from "./../utils/mixins";
 
 const dummyData = {
   restaurants: [
@@ -229,6 +234,7 @@ const dummyData = {
 };
 
 export default {
+  mixins: [emptyImageFilter],
   components: {
     NavTabs,
   },

@@ -5,8 +5,8 @@
     <hr />
     <div class="row text-center">
       <div v-for="user in users" :key="user.id" class="col-3">
-        <router-link :to="{name: 'user', params: {id: user.id}}">
-          <img :src="user.image" width="140px" height="140px" />
+        <router-link :to="{ name: 'user', params: { id: user.id } }">
+          <img :src="user.image | emptyImage" width="140px" height="140px" />
         </router-link>
         <h2>{{ user.name }}</h2>
         <span class="badge badge-secondary"
@@ -37,6 +37,7 @@
 
 <script>
 import NavTabs from "./../components/NavTabs";
+import { emptyImageFilter } from "./../utils/mixins";
 
 const dummyData = {
   users: [
@@ -86,6 +87,7 @@ const dummyData = {
 };
 
 export default {
+  mixins: [emptyImageFilter],
   components: {
     NavTabs,
   },
