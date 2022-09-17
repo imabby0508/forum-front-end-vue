@@ -89,7 +89,7 @@
 
 <script>
 import { v4 as uuidv4 } from "uuid";
-import AdminNav from "@/components/AdminNav";
+import AdminNav from "./../components/AdminNav";
 
 const dummyData = {
   categories: [
