@@ -45,8 +45,8 @@ export default {
   methods: {
     async fetchFeeds() {
       try {
-        const response = await restaurantsAPI.getFeeds();
-        const {restaurants, comments} = response.data
+        const {data} = await restaurantsAPI.getFeeds();
+        const {restaurants, comments} = data
         this.restaurants = restaurants;
         this.comments = comments.filter(comment => comment.Restaurant && comment.text);
       } catch(error) {
