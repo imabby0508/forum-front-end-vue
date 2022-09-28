@@ -119,7 +119,9 @@ export default {
           password: this.password,
           passwordCheck: this.passwordCheck,
         });
-        console.log(data)
+        if (data.status !== 'success') {
+          throw new Error(statusText)
+        }
         Toast.fire({
           icon: "success",
           title: data.message,
@@ -127,7 +129,7 @@ export default {
         this.$router.push({ name: "sign-in" });
       } catch (error) {
         Toast.fire({
-          icon: "warning",
+          icon: "error",
           title: `無法註冊 - ${error.message}`,
         });
       }

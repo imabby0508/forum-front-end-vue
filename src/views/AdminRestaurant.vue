@@ -75,7 +75,7 @@ export default {
   methods: {
     async fetchRestaurant(restaurantId) {
       try {
-        const { data } = await adminAPI.restaurants.getDetails({ restaurantId })
+        const { data, statusText } = await adminAPI.restaurants.getDetails({ restaurantId })
         const {
           id,
           name,
@@ -86,6 +86,9 @@ export default {
           address,
           description,
         } = data.restaurant;
+        if (statusText !== 'OK') {
+          throw new Error(data.message)
+        }
         this.restaurant = {
           ...this.restaurant,
           id,

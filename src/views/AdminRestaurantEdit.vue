@@ -78,6 +78,9 @@ export default {
           image,
           opening_hours: openingHours,
         } = data.restaurant;
+        if (data.status === 'error') {
+          throw new Error(data.message)
+        }
         this.restaurant = {
           ...this.restaurant,
           id,

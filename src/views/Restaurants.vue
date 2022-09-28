@@ -66,8 +66,7 @@ export default {
         const response = await restaurantsAPI.getRestaurants({
           page: queryPage,
           categoryId: queryCategoryId,
-        });
-       
+        });       
         // 透過解構賦值，將所需要的資料從 response.data 取出
         const {
           restaurants,
@@ -78,6 +77,9 @@ export default {
           prev,
           next,
         } = response.data;
+        if (response.statusText !== 'OK') {
+          throw new Error(response.statusText)
+        }
         // 將從伺服器取得的 data 帶入 Vue 內
         this.restaurants = restaurants;
         this.categories = categories;

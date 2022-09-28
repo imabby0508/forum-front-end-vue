@@ -77,11 +77,14 @@ export default {
   methods: {
     async fetchRestaurantsTop() {
       try {
-        const { data } = await restaurantsAPI.getRestaurantsTop();
+        const { data, statusText } = await restaurantsAPI.getRestaurantsTop();
         this.restaurants = data.restaurants;
+        if (statusText !== 'OK') {
+          throw new Error(statusText)
+        }
       } catch (error) {
         Toast.fire({
-          icon: "warning",
+          icon: "error",
           title: "無法取得人氣餐廳，請稍後再試",
         });
         console.log("error", error);
@@ -90,11 +93,9 @@ export default {
     async addFavorite(restaurantId) {
       try {
         const { data } = await usersAPI.addFavorite({ restaurantId });
-
         if (data.stauts === "error") {
           throw new Error(data.message);
         }
-
         this.restaurants = this.restaurants.map((restaurant) => {
           if (restaurant.id !== restaurantId) {
             return restaurant;
@@ -107,7 +108,7 @@ export default {
         });
       } catch (error) {
         Toast.fire({
-          icon: "warning",
+          icon: "error",
           title: "無法將餐廳加入最愛，請稍後再試",
         });
         console.log("error", error);
@@ -116,11 +117,9 @@ export default {
     async deleteFavorite(restaurantId) {
       try {
         const { data } = await usersAPI.deleteFavorite({ restaurantId });
-
         if (data.stauts === "error") {
           throw new Error(data.message);
         }
-
         this.restaurants = this.restaurants.map((restaurant) => {
           if (restaurant.id !== restaurantId) {
             return restaurant;
@@ -133,7 +132,7 @@ export default {
         });
       } catch (error) {
         Toast.fire({
-          icon: "warning",
+          icon: "error",
           title: "無法將餐廳移除最愛，請稍後再試",
         });
         console.log("error", error);

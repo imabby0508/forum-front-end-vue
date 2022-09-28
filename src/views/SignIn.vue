@@ -63,7 +63,6 @@ export default {
   },
   methods: {
     async handleSubmit(e) {
-
       try {
         // 如果 email 或 password 為空，則使用 Toast 提示
         // 然後 return 不繼續往後執行
@@ -73,10 +72,8 @@ export default {
             title: "請填入 email 和 password",
           });
           return;
-        }
-        
+        }        
         this.isProcessing = true;
-
         const response = await authorizationAPI.signIn({
           email: this.email,
           password: this.password,
@@ -84,13 +81,12 @@ export default {
         // 取得 API 請求後的資料
         const { data } = response;
         if (data.status === "error") {
-            throw new Error(data.message);
+          throw new Error(data.message);
         }
         // 將 token 存放在 localStorage 內
         localStorage.setItem("token", data.token);
         // 成功登入後轉址到餐廳首頁
-        this.$router.push("restaurants");
-            
+        this.$router.push("restaurants");            
       } catch(error) {
         this.password = "";
         // 因為登入失敗，所以要把按鈕狀態還原

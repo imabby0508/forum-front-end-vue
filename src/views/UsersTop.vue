@@ -57,7 +57,10 @@ export default {
   methods: {
     async fetchUsersTop() {
       try {
-        const { data } = await usersAPI.getTopUsers();
+        const { data, statusText } = await usersAPI.getTopUsers();       
+        if (statusText !== 'OK') {
+          throw new Error(statusText)
+        }
         this.users = data.users.map((user) => {
           return {
             id: user.id,
@@ -78,11 +81,9 @@ export default {
     async unfollow(userId) {
       try {
         const { data } = await usersAPI.deleteFollowing({ userId });
-
         if (data.status !== "success") {
           throw new Error(data.message);
         }
-
         this.users = this.users.map((user) => {
           if (userId !== user.id) {
             return user;
@@ -105,11 +106,9 @@ export default {
     async follow(userId) {
       try {
         const { data } = await usersAPI.addFollowing({ userId });
-
         if (data.status !== "success") {
           throw new Error(data.message);
         }
-
         this.users = this.users.map((user) => {
           if (userId !== user.id) {
             return user;

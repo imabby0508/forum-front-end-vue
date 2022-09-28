@@ -45,8 +45,11 @@ export default {
   methods: {
     async fetchFeeds() {
       try {
-        const {data} = await restaurantsAPI.getFeeds();
+        const {data, statusText} = await restaurantsAPI.getFeeds();
         const {restaurants, comments} = data
+        if (statusText !== 'OK') {
+          throw new Error(statusText)
+        }
         this.restaurants = restaurants;
         this.comments = comments.filter(comment => comment.Restaurant && comment.text);
       } catch(error) {
