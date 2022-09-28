@@ -38,53 +38,8 @@
 <script>
 import NavTabs from "./../components/NavTabs";
 import { emptyImageFilter } from "./../utils/mixins";
-
-const dummyData = {
-  users: [
-    {
-      id: 1,
-      name: "Ruby",
-      email: "root@example.com",
-      password: "$2a$10$muvKCpG4i2z91josrQOWueNrIhuzksCDoBy4LHR2VVj4W6qNaMeZO",
-      isAdmin: true,
-      image:
-        "https://images.unsplash.com/photo-1641522682419-7e52d83a8ce5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1597&q=80",
-      createdAt: "2022-09-12T13:53:03.000Z",
-      updatedAt: "2022-09-12T13:53:03.000Z",
-      Followers: [],
-      FollowerCount: 0,
-      isFollowed: false,
-    },
-    {
-      id: 2,
-      name: "Cindy",
-      email: "user1@example.com",
-      password: "$2a$10$VO9B/sJkwru/5Rb43JxD7.bEF7hkiX2uZ5gsQjlWRWuVzFhdTTiEC",
-      isAdmin: false,
-      image:
-        "https://images.unsplash.com/photo-1663024718079-ae3cc5d7a9f0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxNDZ8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
-      createdAt: "2022-09-12T13:53:03.000Z",
-      updatedAt: "2022-09-12T13:53:03.000Z",
-      Followers: [],
-      FollowerCount: 0,
-      isFollowed: false,
-    },
-    {
-      id: 3,
-      name: "Alice",
-      email: "user2@example.com",
-      password: "$2a$10$ZE2ZhQXlqjIgIyaOm/TDtOBdWGBZtZwN/56mjwZuIcgrTgydgWNTS",
-      isAdmin: false,
-      image:
-        "https://images.unsplash.com/photo-1642757180112-578d1658523c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-      createdAt: "2022-09-12T13:53:03.000Z",
-      updatedAt: "2022-09-12T13:53:03.000Z",
-      Followers: [],
-      FollowerCount: 0,
-      isFollowed: false,
-    },
-  ],
-};
+import usersAPI from "./../apis/users";
+import { Toast } from "./../utils/helpers";
 
 export default {
   mixins: [emptyImageFilter],
@@ -100,42 +55,79 @@ export default {
     this.fetchUsersTop();
   },
   methods: {
-    fetchUsersTop() {
-      this.users = dummyData.users.map((user) => {
-        return {
-          id: user.id,
-          name: user.name,
-          image: user.image,
-          followerCount: user.FollowerCount,
-          isFollowed: user.isFollowed,
-        };
-      });
-    },
-    unfollow(userId) {
-      this.users = this.users.map((user) => {
-        if (userId !== user.id) {
-          return user;
-        } else {
+    async fetchUsersTop() {
+      try {
+        const { data } = await usersAPI.getTopUsers();
+        this.users = data.users.map((user) => {
           return {
-            ...user,
-            followerCount: user.followerCount - 1,
-            isFollowed: false,
+            id: user.id,
+            name: user.name,
+            image: user.image,
+            followerCount: user.FollowerCount,
+            isFollowed: user.isFollowed,
           };
-        }
-      });
+        });
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法取得美食達人，請稍後再試",
+        });
+        console.log("error", error);
+      }
     },
-    follow(userId) {
-      this.users = this.users.map((user) => {
-        if (userId !== user.id) {
-          return user;
-        } else {
-          return {
-            ...user,
-            followerCount: user.followerCount + 1,
-            isFollowed: true,
-          };
+    async unfollow(userId) {
+      try {
+        const { data } = await usersAPI.deleteFollowing({ userId });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
         }
-      });
+
+        this.users = this.users.map((user) => {
+          if (userId !== user.id) {
+            return user;
+          } else {
+            return {
+              ...user,
+              followerCount: user.followerCount - 1,
+              isFollowed: false,
+            };
+          }
+        });
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法取消追蹤，請稍後再試",
+        });
+        console.log("error", error);
+      }
+    },
+    async follow(userId) {
+      try {
+        const { data } = await usersAPI.addFollowing({ userId });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        this.users = this.users.map((user) => {
+          if (userId !== user.id) {
+            return user;
+          } else {
+            return {
+              ...user,
+              followerCount: user.followerCount + 1,
+              isFollowed: true,
+            };
+          }
+        });
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法加入追蹤，請稍後再試",
+        });
+        console.log("error", error);
+      }      
     },
   },
 };
