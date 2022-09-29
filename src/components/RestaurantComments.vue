@@ -8,6 +8,7 @@
           v-if="currentUser.isAdmin"
           type="button"
           class="btn btn-danger float-right"
+          :disabled="isProcessing"
           @click.stop.prevent="handleDeleteButtonClick(comment.id)"
         >
           Delete
@@ -29,16 +30,9 @@
 
 <script>
 import { fromNowFilter } from "./../utils/mixins";
-
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-};
+import commentsAPI from './../apis/comments'
+import { Toast } from './../utils/helpers'
+import { mapState } from 'vuex'
 
 export default {
   // 透過 mixins 屬性將撰寫好的 mixin 放入
@@ -51,14 +45,35 @@ export default {
   },
   data() {
     return {
-      currentUser: dummyUser.currentUser,
+      isProcessing: false,
     };
   },
+  computed: {
+    ...mapState(['currentUser'])
+  },
   methods: {
-    handleDeleteButtonClick(commentId) {
-      // TODO: 請求 API 伺服器刪除 id 為 commentId 的評論
-      // 觸發父層事件 - $emit( '事件名稱' , 傳遞的資料 )
-      this.$emit("after-delete-comment", commentId);
+    async handleDeleteButtonClick(commentId) {
+      try {
+        this.isProcessing = true;
+        const { data } = await commentsAPI.delete({ commentId })
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        // 觸發父層事件 - $emit( '事件名稱' , 傳遞的資料 )
+        this.$emit("after-delete-comment", commentId);
+        Toast.fire({
+          icon: "success",
+          title: "刪除評論成功",
+        });
+        this.isProcessing = false;
+      } catch(error) {
+        this.isProcessing = false;
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法刪除評論，請稍後再試",
+        });
+      }      
     },
   },
 };
