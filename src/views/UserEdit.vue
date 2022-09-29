@@ -102,6 +102,7 @@ export default {
       } else {
         const imageURL = window.URL.createObjectURL(files[0]);
         this.user.image = imageURL;
+        console.log(this.user)
       }
     },
     async handleSubmit(e) {
@@ -116,12 +117,12 @@ export default {
           return;
         }
         this.isProcessing = true;
-
+        
         const { data } = await usersAPI.update({
           userId: this.user.id,
           formData,
         });
-
+       
         if (data.status === "error") {
           throw new Error(data.message);
         }

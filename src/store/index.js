@@ -15,7 +15,6 @@ export default new Vuex.Store({
     },
     isAuthenticated: false,
   },
-  getters: {},
   mutations: {
     setCurrentUser(state, currentUser) {
       state.currentUser = {
@@ -46,5 +45,4 @@ export default new Vuex.Store({
       }
     },
   },
-  modules: {},
 });
