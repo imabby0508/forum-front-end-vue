@@ -63,6 +63,9 @@
 </template>
 
 <script>
+import usersAPI from "./../apis/users";
+import { Toast } from "./../utils/helpers";
+
 export default {
   props: {
     user: {
@@ -83,12 +86,41 @@ export default {
       isFollowed: this.initialIsFollowed,
     };
   },
-  methods: {
-    addFollowing(userId) {
-      this.isFollowed = true;
+  watch: {
+    initialIsFollowed(isFollowed) {
+      this.isFollowed = isFollowed;
     },
-    deleteFollowing(userId) {
-      this.isFollowed = false;
+  },
+  methods: {
+    async addFollowing(userId) {
+      try {
+        const { data } = await usersAPI.addFollowing({ userId });
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+        this.isFollowed = true;
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法將使用者加入追蹤，請稍後再試",
+        });
+      }
+    },
+    async deleteFollowing(userId) {
+      try {
+        const { data } = await usersAPI.deleteFollowing({ userId });
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+        this.isFollowed = false;
+      } catch (error) {
+        console.log("error", error);
+        Toast.fire({
+          icon: "error",
+          title: "無法將使用者取消追蹤，請稍後再試",
+        });
+      }
     },
   },
 };

@@ -39,16 +39,7 @@ import UserCommentsCard from "./../components/UserCommentsCard";
 import UserFavoritedRestaurantsCard from "./../components/UserFavoritedRestaurantsCard";
 import usersAPI from "./../apis/users"
 import { Toast } from "./../utils/helpers"
-
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-};
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -75,7 +66,6 @@ export default {
       followers: [],
       followings: [],
       isFollowed: false,
-      currentUser: dummyUser.currentUser,
     };
   },
   created() {
@@ -87,6 +77,9 @@ export default {
     const { id } = to.params
     this.fetchUser(id)
     next()
+  },
+  computed: {
+    ...mapState(['currentUser'])
   },
   methods: {
     async fetchUser(userId) {
