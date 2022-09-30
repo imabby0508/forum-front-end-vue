@@ -102,7 +102,6 @@ export default {
       } else {
         const imageURL = window.URL.createObjectURL(files[0]);
         this.user.image = imageURL;
-        console.log(this.user)
       }
     },
     async handleSubmit(e) {

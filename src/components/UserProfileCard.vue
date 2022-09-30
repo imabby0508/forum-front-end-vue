@@ -3,7 +3,7 @@
     <div class="row no-gutters">
       <div class="col-md-4">
         <img
-          src="https://i.imgur.com/iO9H3N1.png"
+          :src="user.image | emptyImage"
           width="300px"
           height="300px"
         />
@@ -65,8 +65,10 @@
 <script>
 import usersAPI from "./../apis/users";
 import { Toast } from "./../utils/helpers";
+import { emptyImageFilter } from './../utils/mixins'
 
 export default {
+  mixins: [emptyImageFilter],
   props: {
     user: {
       type: Object,
